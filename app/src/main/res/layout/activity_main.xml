@@ -44,15 +44,18 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:textSize="30sp"
-        android:fontFamily="cursive" />
+        android:fontFamily="cursive"
+        android:id="@+id/infoContainer"/>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/crimeBtn"
         style="@style/buttonColor"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Crime Nearby" />
+        android:text="Crime Nearby"
+        android:onClick="onClickBtn"
+        />
 
 
 </LinearLayout>
