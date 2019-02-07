@@ -10,10 +10,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements myLocationUtil.myLocationCallback {
 
     private WebView webView;
     private ProgressDialog pDialog;
@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity  {
     public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/";
     public static final String SERVICE_URL = "https://opendata.arcgis.com/datasets/28c37c4693fc4db68665025c2874e76b_7.geojson";
 
+    private boolean locationRegistered = false;
+
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        setupGPS();
+        locationRegistered =  myLocationUtil.registerCallback(this, this);
 
         webView = findViewById(R.id.webview1);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -66,55 +69,19 @@ public class MainActivity extends AppCompatActivity  {
         Toast.makeText(this, "Total number of crime nearby is " + newList.size(), Toast.LENGTH_LONG).show();
     }
 
-    private void setupGPS(){
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+    @Override
+    public void onLocationChange(Location location) {
+        double la = location.getLatitude();
+        double lon = location.getLongitude();
+        Toast.makeText(this, la + ":" + lon, Toast.LENGTH_SHORT).show();
+    }
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        1);
-
-                // MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!locationRegistered){
+            locationRegistered = myLocationUtil.registerCallback(this, this);
         }
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(provider, 5000, 100, new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                double longitude = location.getLongitude();
-                double latitude = location.getLatitude();
-
-                //BigDecimal.valueOf(location.getLongitude()).setScale(7, RoundingMode.HALF_UP).doubleValue()
-                Toast.makeText(MainActivity.this, longitude + " " + latitude, Toast.LENGTH_SHORT).show();
-                String url = GOOGLE_MAP_URL + "@" + latitude + "," + longitude;
-                Log.d("googlemap", url);
-                webView.loadUrl("https://www.google.com/maps/@47.2093246,-122.5276514,17.04z");
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        });
     }
 
     private class GetCrimeData extends AsyncTask<Void, Void, Void> {
