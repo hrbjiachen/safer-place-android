@@ -79,7 +79,7 @@ public class myLocationUtil {
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
             LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
             String provider = locationManager.getBestProvider(criteria, true);
-            locationManager.requestLocationUpdates(provider, 5, 0, new LocationListener() {
+            locationManager.requestLocationUpdates(provider, 5000, 1000, new LocationListener() {
                 public void onLocationChanged(Location location) {
                     mCallback.onLocationChange(location);
                 }
