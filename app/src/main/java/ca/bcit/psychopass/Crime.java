@@ -1,6 +1,7 @@
 package ca.bcit.psychopass;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Crime {
@@ -16,7 +17,7 @@ public class Crime {
 
     private String ReportedDate;
 
-    private String ReportedTime;
+    private Date ReportedTime;
 
     private String ReportedWeekday;
 
@@ -72,10 +73,10 @@ public class Crime {
     public String getReportedDate(){
         return this.ReportedDate;
     }
-    public void setReportedTime(String ReportedTime){
+    public void setReportedTime(Date ReportedTime){
         this.ReportedTime = ReportedTime;
     }
-    public String getReportedTime(){
+    public Date getReportedTime(){
         return this.ReportedTime;
     }
     public void setReportedWeekday(String ReportedWeekday){

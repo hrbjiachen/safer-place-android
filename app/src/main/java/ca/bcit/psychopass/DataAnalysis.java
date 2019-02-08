@@ -18,8 +18,8 @@ public class DataAnalysis {
     private double Latitude;
     private List<Crime> crimeList;
 
-    private static final double RADIUS_LONGTITUDE = 0.0005;
-    private static final double RADIUS_LATITUDE = 0.00025;
+    private static final double RADIUS_LONGTITUDE = 0.001;
+    private static final double RADIUS_LATITUDE = 0.0005;
 
     DataAnalysis(){
         Longitude = -122.6039533;
@@ -53,18 +53,7 @@ public class DataAnalysis {
         Collections.sort(crimeList,new Comparator<Crime>() {
             @Override
             public int compare(Crime c1, Crime c2) {
-                String date1 = c1.getReportedTime().substring(0,23);
-                String date2 = c2.getReportedTime().substring(0,23);
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-                try {
-                    Date d1 = df.parse(date1);
-                    Date d2 = df.parse(date2);
-                    return d2.compareTo(d1);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                return 0;
+                return c2.getReportedTime().compareTo(c1.getReportedTime());
             }
         });
 

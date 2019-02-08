@@ -1,5 +1,6 @@
 package ca.bcit.psychopass;
 
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,8 +32,14 @@ public class CrimeListActivity extends AppCompatActivity {
         DataAnalysis d = new DataAnalysis(Longitude,Latitude,originalList);
         crimeModels = d.getNearbyCrime();
         CrimeListAdaptor adapter = new CrimeListAdaptor(crimeModels, getApplicationContext());
-        listView.setAdapter(adapter);
 
+
+        Location curlocation = new Location("service Provider");
+        curlocation.setLatitude(Latitude);
+        curlocation.setLongitude(Longitude);
+
+        adapter.setCurLocation(curlocation);
+        listView.setAdapter(adapter);
     }
 
     public List<Crime> parseLocalJSON(){

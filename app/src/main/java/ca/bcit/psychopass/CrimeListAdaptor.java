@@ -1,6 +1,7 @@
 package ca.bcit.psychopass;
 
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClickListener{
 
     private ArrayList<Crime> dataSet;
     Context mContext;
+    Location curLocation;
 
     // View lookup cache
     private static class ViewHolder {
@@ -33,6 +36,10 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
         this.dataSet = data;
         this.mContext=context;
 
+    }
+
+    public void setCurLocation(Location location) {
+        curLocation = location;
     }
 
     @Override
@@ -78,10 +85,16 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
         result.startAnimation(animation);
         lastPosition = position;
 
+        Location tempLocation = new Location("Service Provider");
+        tempLocation.setLatitude(crime.getLatitude());
+        tempLocation.setLongitude(crime.getLongitude());
+
+        int distance = (int) tempLocation.distanceTo(curLocation);
+
         viewHolder.offense.setText(crime.getOffense());
-        viewHolder.street_name.setText(crime.getStreetName());
-        viewHolder.reportedTime.setText(crime.getReportedTime());
-        viewHolder.coordinate.setText("("+ crime.getLatitude() + ", " + crime.getLongitude() + ")");
+        viewHolder.street_name.setText((crime.getHouseNumber()==null? crime.getHouseNumber() +" " : "")+crime.getStreetName());
+        viewHolder.reportedTime.setText("Time: " +new SimpleDateFormat("HH:mm:ss").format(crime.getReportedTime()));
+        viewHolder.coordinate.setText("Distances: " + distance + " meters");
         viewHolder.ReportedDateText.setText(crime.getReportedDateText());
         viewHolder.info.setOnClickListener(this);
         viewHolder.info.setTag(position);
