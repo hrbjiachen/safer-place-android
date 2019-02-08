@@ -1,11 +1,16 @@
 package ca.bcit.psychopass;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Location;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,8 +25,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements myLocationUtil.myLocationCallback {
+public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
     private ProgressDialog pDialog;
@@ -32,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements myLocationUtil.my
     public static final String INITIAL_LOCATION =
         "https://www.google.com/maps/place/Maple+Ridge,+BC/@49.2599033,-122.6800957,11z/data=!3m1!4b1!4m5!3m4!1s0x5485d3614f013ecb:0x47a5c3ea30cde8ea!8m2!3d49.2193226!4d-122.5983981";
 
-    private boolean locationRegistered = false;
+    public boolean permissionRequested = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -41,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements myLocationUtil.my
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        locationRegistered =  myLocationUtil.registerCallback(this, this);
+        locationServiceCheck();
+
 
         webView = findViewById(R.id.webview1);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -62,19 +71,43 @@ public class MainActivity extends AppCompatActivity implements myLocationUtil.my
     }
 
     @Override
-    public void onLocationChange(Location location) {
-        double la = location.getLatitude();
-        double lon = location.getLongitude();
-        //Toast.makeText(this, la + ":" + lon, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        if(!locationRegistered){
-            locationRegistered = myLocationUtil.registerCallback(this, this);
+        locationServiceCheck();
+    }
+
+    private void locationServiceCheck(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(getBaseContext(), MyLocationService.class);
+            startService(intent);
+        } else {
+            if(permissionRequested){
+                Timer timer = new Timer();
+
+                timer.scheduleAtFixedRate(new TimerTask() {
+
+                    synchronized public void run() {
+
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "This App won't work without location permission." +
+                                        "Please turn it on in Setting.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+
+                }, TimeUnit.SECONDS.toMillis(5), TimeUnit.SECONDS.toMillis(30));
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        1);
+                permissionRequested = true;
+            }
         }
     }
+
 
     //this is not used, but keep it for reference
     private class GetCrimeData extends AsyncTask<Void, Void, Void> {
