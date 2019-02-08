@@ -3,12 +3,9 @@ package ca.bcit.psychopass;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -18,20 +15,17 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements myLocationUtil.myLocationCallback {
+public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
     private ProgressDialog pDialog;
@@ -41,8 +35,6 @@ public class MainActivity extends AppCompatActivity implements myLocationUtil.my
     public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/";
     public static final String SERVICE_URL = "https://opendata.arcgis.com/datasets/28c37c4693fc4db68665025c2874e76b_7.geojson";
 
-    private boolean locationRegistered = false;
-
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -51,14 +43,16 @@ public class MainActivity extends AppCompatActivity implements myLocationUtil.my
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        locationRegistered =  myLocationUtil.registerCallback(this, this);
+        checkRequestLocationPermission();
+        Intent intent = new Intent(getBaseContext(), MyLocationService.class);
+        startService(intent);
 
         webView = findViewById(R.id.webview1);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://www.google.com/maps/place/Maple+Ridge,+BC/@49.2599033,-122.6800957,11z/data=!3m1!4b1!4m5!3m4!1s0x5485d3614f013ecb:0x47a5c3ea30cde8ea!8m2!3d49.2193226!4d-122.5983981");
 
-        new GetCrimeData().execute();
+//        new GetCrimeData().execute();
     }
 
     public void onClickBtn(View v) {
@@ -70,18 +64,18 @@ public class MainActivity extends AppCompatActivity implements myLocationUtil.my
     }
 
     @Override
-    public void onLocationChange(Location location) {
-        double la = location.getLatitude();
-        double lon = location.getLongitude();
-        Toast.makeText(this, la + ":" + lon, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        if(!locationRegistered){
-            locationRegistered = myLocationUtil.registerCallback(this, this);
-        }
+//        checkRequestLocationPermission();
+    }
+
+    private void checkRequestLocationPermission(){
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+//        }
     }
 
     private class GetCrimeData extends AsyncTask<Void, Void, Void> {
