@@ -21,7 +21,6 @@ public class DataAnalysis {
     private static final double RADIUS_LONGTITUDE = 0.0005;
     private static final double RADIUS_LATITUDE = 0.00025;
 
-
     DataAnalysis(){
         Longitude = -122.6039533;
         Latitude = 49.2178709;

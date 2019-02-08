@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PsychoPass</string>
+    <string name="Setting">Setting</string>
+    <string name="notificationLabel">Push Notification</string>
+    <string name="SMS">Text Message</string>
+    <string name="call">Phone Call</string>
 </resources>

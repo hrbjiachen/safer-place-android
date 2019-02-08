@@ -1,12 +1,17 @@
 package ca.bcit.psychopass;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class MyLocationService extends Service {
@@ -27,6 +32,26 @@ public class MyLocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
+            Intent intent = new Intent(MyLocationService.this,MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MyLocationService.this)
+                    .setSmallIcon(R.drawable.settings)
+                    .setContentTitle("Warning")
+                    .setVibrate(new long[]{1000,1000,1000})
+                    .setContentIntent(pendingIntent)
+                    .setContentText("You have entered a dangrous zone. Be careful!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            Notification notification;
+            notification = mBuilder
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) //to show content on lock screen
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .build();
+
+            NotificationManager notificationManager = (NotificationManager) MyLocationService.this.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1, notification);
+
             mLastLocation.set(location);
         }
 

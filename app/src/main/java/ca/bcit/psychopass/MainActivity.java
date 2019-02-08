@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -51,11 +53,20 @@ public class MainActivity extends AppCompatActivity {
 
         locationServiceCheck();
 
-
         webView = findViewById(R.id.webview1);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(INITIAL_LOCATION);
+
+        ImageView setting = findViewById(R.id.settingImg);
+        setting.setClickable(true);
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //new GetCrimeData().execute();
     }
@@ -147,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                                 .show();
                     }
                 });
-
             }
 
             return null;

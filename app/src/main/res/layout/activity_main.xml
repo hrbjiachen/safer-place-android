@@ -23,11 +23,12 @@
             android:textSize="30sp" />
 
         <ImageView
+            android:id="@+id/settingImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/settings"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="8dp"/>
     </LinearLayout>
 
     <WebView  xmlns:android="http://schemas.android.com/apk/res/android"
