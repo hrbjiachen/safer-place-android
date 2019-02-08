@@ -1,6 +1,14 @@
 package ca.bcit.psychopass;
 
+import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import static java.lang.Math.abs;
@@ -36,8 +44,36 @@ public class DataAnalysis {
                 tempList.add(c);
             }
         }
+        sortCimeList(tempList);
 
         return tempList;
+    }
+
+    public void sortCimeList(ArrayList<Crime> crimeList){
+
+        Collections.sort(crimeList,new Comparator<Crime>() {
+            @Override
+            public int compare(Crime c1, Crime c2) {
+                String date1 = c1.getReportedTime().substring(0,23);
+                String date2 = c2.getReportedTime().substring(0,23);
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                try {
+                    Date d1 = df.parse(date1);
+                    Date d2 = df.parse(date2);
+                    return d2.compareTo(d1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                return 0;
+            }
+        });
+
+    }
+
+
+    public boolean isDangerZone() {
+        return true;
     }
 
 }
