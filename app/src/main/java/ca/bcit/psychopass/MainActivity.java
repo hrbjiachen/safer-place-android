@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -23,18 +24,17 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,11 +58,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
+        locationServiceCheck();
+        setInitialWebView();
+        initializeSettingIcon();
+
+        MyJsonUtil jsonUtil = new MyJsonUtil(MainActivity.this,getApplicationContext());
+        jsonUtil.parseLocalJSON();
+    }
+
+    public void setInitialWebView() {
         webView = findViewById(R.id.mapWebView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(INITIAL_LOCATION);
+    }
 
+    public void initializeSettingIcon() {
         ImageView setting = findViewById(R.id.settingImg);
         setting.setClickable(true);
         setting.setOnClickListener(new View.OnClickListener() {
@@ -72,23 +83,67 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        //new GetCrimeData().execute();
     }
 
     public void onClickBtn(View v) {
-        double testLongitude = -122.6039533;
-        double testLatitude = 49.2178709;
+        //testing coordinates
+        //double testLongitude = -122.6039533;
+        //double testLatitude = 49.2178709;
 
         Intent intent = new Intent(MainActivity.this,CrimeListActivity.class);
-        intent.putExtra("Longitude", testLongitude);
-        intent.putExtra("Latitude", testLatitude);
-        //startActivity(intent);
-
         webView = findViewById(R.id.mapWebView);
         String webUrl = webView.getUrl();
-        Toast.makeText(MainActivity.this, webUrl, Toast.LENGTH_LONG).show();
-        Log.e(TAG, webUrl);
+
+        String pattern = "\\@(-?[\\d\\.]*)\\,(-?[\\d\\.]*)";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(webUrl);
+
+        if(m.find()){
+            String[] coordinates = m.group(0).replace("@","").split(",");
+            prepareInfoDisplay(coordinates);
+        } else {
+            Toast.makeText(MainActivity.this, "Error: unable to retrieve location info!", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public void prepareInfoDisplay(String[] coordinates) {
+        final double curLong = Double.parseDouble(coordinates[1]);
+        final double curLati = Double.parseDouble(coordinates[0]);
+
+        LinearLayout layout = findViewById(R.id.infoLayout);
+        DataAnalysis d = new DataAnalysis(curLong,curLati, MyJsonUtil.crimeList);
+
+        int size = d.getNearbyCrime().size();
+        if(layout.getChildCount() > 1) {
+            layout.removeViewAt(1);
+        }
+
+        if(size == 0) {
+            TextView tvInfo = findViewById(R.id.infoContainer);
+            tvInfo.setText("This is a slogan!");
+            Toast.makeText(MainActivity.this, "No crime data for this location!", Toast.LENGTH_LONG).show();
+        } else {
+            TextView tvInfo = findViewById(R.id.infoContainer);
+            tvInfo.setText("Found " + size + " crimes nearby.");
+
+            TextView textView = new TextView(this);
+            textView.setText(R.string.viewDetail);
+            textView.setTextSize(18);
+            textView.setTextColor(Color.BLUE);
+
+            layout.addView(textView);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, CrimeListActivity.class);
+                    intent.putExtra("Longitude", curLong);
+                    intent.putExtra("Latitude", curLati);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override
@@ -180,60 +235,5 @@ public class MainActivity extends AppCompatActivity {
             isBoundLocation = false;
         }
     };
-
-    //this is not used, but keep it for reference
-    private class GetCrimeData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Showing progress dialog
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            HttpHandler sh = new HttpHandler();
-
-            // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(SERVICE_URL);
-
-            Log.e(TAG, "Response from url: " + jsonStr);
-
-            if (jsonStr != null) {
-                myJsonUtil ut = new myJsonUtil(MainActivity.this, getApplicationContext());
-
-                //assign below list<Crime> to a global variable
-                ut.getAllCrimeObj(jsonStr);
-            } else {
-                Log.e(TAG, "Couldn't get json from server.");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
-
-            Log.e(TAG, "Load data complete!");
-        }
-    }
 
 }

@@ -9,22 +9,43 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class myJsonUtil {
-    private static final String TAG = "myJsonUtil";
+public class MyJsonUtil {
+    private static final String TAG = "MyJsonUtil";
+    public static List<Crime> crimeList = new ArrayList<Crime>();
 
     Context mContext;
     Activity v;
 
 
-    public myJsonUtil(Activity v, Context context) {
+    public MyJsonUtil(Activity v, Context context) {
         this.mContext=context;
         this.v = v;
+    }
+
+    public void parseLocalJSON(){
+        String jsonStr;
+
+        try {
+            InputStream is = mContext.getAssets().open("Property_Crimes.geojson");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            jsonStr = new String(buffer, "UTF-8");
+            crimeList = getAllCrimeObj(jsonStr);
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error reading JSON file:" + e.getMessage());
+        }
     }
 
     public List<Crime> getAllCrimeObj(String jsonStr) {

@@ -4,6 +4,7 @@
     <string name="notificationLabel">Push Notification</string>
     <string name="SMS">Text Message</string>
     <string name="call">Phone Call</string>
-    <string name="sampleText">Crime Rate: 57%</string>
+    <string name="sampleText">This is a slogan!</string>
     <string name="CrimeNearbyBtnText">Crime Nearby</string>
+    <string name="viewDetail"><u>View Detail</u></string>
 </resources>
