@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private MyLocationService locationService;
     private boolean isBoundLocation = false;
     private Timer timer = new Timer();
+    private Location curLocation;
 
     public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/";
     public static final String SERVICE_URL = "https://opendata.arcgis.com/datasets/28c37c4693fc4db68665025c2874e76b_7.geojson";
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         locationServiceCheck();
         setInitialWebView();
         initializeSettingIcon();
+        initializeLocationIcon();
 
         MyJsonUtil jsonUtil = new MyJsonUtil(MainActivity.this,getApplicationContext());
         jsonUtil.parseLocalJSON();
@@ -72,6 +74,21 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(INITIAL_LOCATION);
+    }
+
+    public void initializeLocationIcon() {
+        ImageView location = findViewById(R.id.locationImg);
+        location.setClickable(true);
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(curLocation != null){
+                    Toast.makeText(MainActivity.this,
+                            curLocation.getLatitude() + ":" + curLocation.getLongitude(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void initializeSettingIcon() {
@@ -103,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             String[] coordinates = m.group(0).replace("@","").split(",");
             prepareInfoDisplay(coordinates);
         } else {
-            Toast.makeText(MainActivity.this, "Error: unable to retrieve location info!", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, R.string.errorLocation, Toast.LENGTH_LONG).show();
         }
 
     }
@@ -122,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(size == 0) {
             TextView tvInfo = findViewById(R.id.infoContainer);
-            tvInfo.setText("This is a slogan!");
-            Toast.makeText(MainActivity.this, "No crime data for this location!", Toast.LENGTH_LONG).show();
+            tvInfo.setText(R.string.sampleText);
+            Toast.makeText(MainActivity.this, R.string.noCrimeData, Toast.LENGTH_LONG).show();
         } else {
             TextView tvInfo = findViewById(R.id.infoContainer);
             tvInfo.setText("Found " + size + " crimes nearby.");
@@ -172,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,
                         location.getLatitude() + ":" + location.getLongitude(),
                         Toast.LENGTH_SHORT).show();
+                curLocation = location;
             }
         };
         locationService.registerCallback(MainActivity.class, cb);
@@ -212,8 +230,7 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MainActivity.this, "This App won't work without location permission." +
-                                        "Please turn it on in Setting.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, R.string.requirePermission , Toast.LENGTH_LONG).show();
                             }
                         });
                     }

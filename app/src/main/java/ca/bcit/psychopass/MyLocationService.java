@@ -62,7 +62,7 @@ public class MyLocationService extends Service {
             PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MyLocationService.this)
-                    .setSmallIcon(R.drawable.settings)
+                    .setSmallIcon(R.drawable.ic_warning)
                     .setContentTitle("Warning")
                     .setVibrate(new long[]{1000,1000,1000})
                     .setContentIntent(pendingIntent)

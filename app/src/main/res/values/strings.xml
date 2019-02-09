@@ -7,4 +7,7 @@
     <string name="sampleText">This is a slogan!</string>
     <string name="CrimeNearbyBtnText">Crime Nearby</string>
     <string name="viewDetail"><u>View Detail</u></string>
+    <string name="noCrimeData">No crime data for this location!</string>
+    <string name="errorLocation">Error: unable to retrieve location info!</string>
+    <string name="requirePermission">Location permission required. </string>
 </resources>
