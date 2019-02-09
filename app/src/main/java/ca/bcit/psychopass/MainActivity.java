@@ -21,6 +21,8 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,18 +65,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBtn(View v) {
-        double testLongitude = -122.6039533;
-        double testLatitude = 49.2178709;
+        //testing coordinates
+        //double testLongitude = -122.6039533;
+        //double testLatitude = 49.2178709;
 
         Intent intent = new Intent(MainActivity.this,CrimeListActivity.class);
-        intent.putExtra("Longitude", testLongitude);
-        intent.putExtra("Latitude", testLatitude);
-        //startActivity(intent);
-
         webView = findViewById(R.id.mapWebView);
         String webUrl = webView.getUrl();
-        Toast.makeText(MainActivity.this, webUrl, Toast.LENGTH_LONG).show();
-        Log.e(TAG, webUrl);
+
+        String pattern = "\\@(-?[\\d\\.]*)\\,(-?[\\d\\.]*)";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(webUrl);
+
+        if(m.find()){
+            String[] coordinates = m.group(0).replace("@","").split(",");
+            double curLati = Double.parseDouble(coordinates[0]);
+            double curLong = Double.parseDouble(coordinates[1]);
+
+            intent.putExtra("Longitude", curLong);
+            intent.putExtra("Latitude", curLati);
+            startActivity(intent);
+        } else {
+            Toast.makeText(MainActivity.this, "Unable to locate current address!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override

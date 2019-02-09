@@ -27,7 +27,8 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
         TextView street_name;
         TextView reportedTime;
         TextView coordinate;
-        TextView ReportedDateText;
+        TextView ReportedDateText_up;
+        TextView ReportedDateText_down;
         ImageView info;
     }
 
@@ -71,7 +72,8 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
             viewHolder.street_name = convertView.findViewById(R.id.street_name);
             viewHolder.reportedTime = convertView.findViewById(R.id.reportedTime);
             viewHolder.coordinate = convertView.findViewById(R.id.coordinate);
-            viewHolder.ReportedDateText =  convertView.findViewById(R.id.ReportedDateText);
+            viewHolder.ReportedDateText_up =  convertView.findViewById(R.id.ReportedDateText_up);
+            viewHolder.ReportedDateText_down =  convertView.findViewById(R.id.ReportedDateText_down);
             viewHolder.info =  convertView.findViewById(R.id.item_info);
             result=convertView;
 
@@ -91,11 +93,16 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
 
         int distance = (int) tempLocation.distanceTo(curLocation);
 
-        viewHolder.offense.setText(crime.getOffense());
-        viewHolder.street_name.setText((crime.getHouseNumber()==null? crime.getHouseNumber() +" " : "")+crime.getStreetName());
+        String prettyText_offense = crime.getOffense().substring(0, 1).toUpperCase() + crime.getOffense().substring(1).toLowerCase();
+        String address = (crime.getHouseNumber()==null? crime.getHouseNumber() +" " : "")+crime.getStreetName();
+        String prettyText_address = (address.substring(0, 1).toUpperCase() + address.substring(1).toLowerCase());
+
+        viewHolder.offense.setText("Offense: " + prettyText_offense);
+        viewHolder.street_name.setText("Address: "+ prettyText_address);
         viewHolder.reportedTime.setText("Time: " +new SimpleDateFormat("HH:mm:ss").format(crime.getReportedTime()));
         viewHolder.coordinate.setText("Distances: " + distance + " meters");
-        viewHolder.ReportedDateText.setText(crime.getReportedDateText());
+        viewHolder.ReportedDateText_up.setText(crime.getReportedDateText().split(",")[1].trim());
+        viewHolder.ReportedDateText_down.setText(crime.getReportedDateText().split(",")[0]);
         viewHolder.info.setOnClickListener(this);
         viewHolder.info.setTag(position);
         // Return the completed view to render on screen
