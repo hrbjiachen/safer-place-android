@@ -1,51 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Setting"
-        android:padding="10dp"
-        android:textSize="100px"
-        android:textFontWeight="bold"/>
+    <FrameLayout
+        android:id="@+id/setting_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 
-
-    <Switch
-        android:id="@+id/notificationSwitch"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="157dp"
-        android:layout_marginEnd="237dp"
-        android:text="@string/notificationLabel"/>
-
-    <Switch
-        android:id="@+id/smsSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="211dp"
-        android:layout_marginEnd="237dp"
-        android:layout_alignLeft="@+id/notificationSwitch"
-        android:text="@string/SMS" />
-
-    <Switch
-        android:id="@+id/switch2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/smsSwitch"
-        android:layout_alignLeft="@+id/smsSwitch"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginLeft="38dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/call" />
-
-</RelativeLayout>
+</LinearLayout>

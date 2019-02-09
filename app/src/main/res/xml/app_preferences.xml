@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Danger Zone Alert">
+
+        <SwitchPreferenceCompat
+            android:key="pref_push"
+            android:title="@string/notification_push"
+            android:summary="@string/notification_push_desc"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_text"
+            android:title="@string/notification_sms"
+            android:summary="@string/notification_sms_desc"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_phone"
+            android:title="@string/notification_phone"
+            android:summary="@string/notification_phone_desc"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

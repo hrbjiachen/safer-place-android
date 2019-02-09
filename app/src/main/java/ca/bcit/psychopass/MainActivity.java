@@ -6,17 +6,14 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,8 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Objects.requireNonNull(getSupportActionBar()).hide();
 
         locationServiceCheck();
         setInitialWebView();
@@ -84,9 +78,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(curLocation != null){
-                    Toast.makeText(MainActivity.this,
-                            curLocation.getLatitude() + ":" + curLocation.getLongitude(),
-                            Toast.LENGTH_SHORT).show();
+                  Toast.makeText(MainActivity.this, curLocation.getLatitude() + ":" + curLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
