@@ -31,7 +31,7 @@ public class MyLocationService extends Service {
     private LocationManager mLocationManager = null;
     private final IBinder mBinder = new LocationBinder();
 
-    private Map<String, List<LocationCallback>> callbackMap = new HashMap<>();
+    private Map<String, LocationCallback> callbackMap = new HashMap<>();
 
     public interface LocationCallback {
         void onCallback(Location location);
@@ -55,10 +55,8 @@ public class MyLocationService extends Service {
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
 
-            for(Map.Entry<String, List<LocationCallback>> entry : callbackMap.entrySet()){
-                for(LocationCallback cb : entry.getValue()){
-                    cb.onCallback(location);
-                }
+            for(Map.Entry<String, LocationCallback> entry : callbackMap.entrySet()){
+                entry.getValue().onCallback(location);
             }
             Intent intent = new Intent(MyLocationService.this,MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
@@ -169,19 +167,13 @@ public class MyLocationService extends Service {
         }
     }
 
-    public void removeAllCallback(Class<? extends Context> classType) {
+    public void removeCallback(Class<? extends Context> classType) {
         callbackMap.remove(classType.getName());
     }
 
     public void registerCallback(Class<? extends Context> classType, LocationCallback cb){
         String className = classType.getName();
-        if(callbackMap.containsKey(className)){
-            Objects.requireNonNull(callbackMap.get(className)).add(cb);
-        } else {
-            List<LocationCallback> list = new ArrayList<>();
-            list.add(cb);
-            callbackMap.put(className, list);
-        }
+        callbackMap.put(className, cb);
     }
 
 }
