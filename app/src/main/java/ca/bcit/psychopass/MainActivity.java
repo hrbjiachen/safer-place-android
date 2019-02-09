@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private MyLocationService locationService;
     private boolean isBoundLocation = false;
+    private Timer timer = new Timer();
 
     public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/";
     public static final String SERVICE_URL = "https://opendata.arcgis.com/datasets/28c37c4693fc4db68665025c2874e76b_7.geojson";
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         permissionRequested = false;
-        if(MyLocationService.isRunning){
+        if(!isBoundLocation){
             Intent intent = new Intent(this, MyLocationService.class);
             isBoundLocation = bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
@@ -180,21 +181,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (isBoundLocation) {
-            locationService.removeAllCallback(MainActivity.class);
+            locationService.removeCallback(MainActivity.class);
             unbindService(mConnection);
             isBoundLocation = false;
         }
     }
 
     private void locationServiceCheck(){
+        Intent intent = new Intent(this, MyLocationService.class);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, MyLocationService.class);
+
+            timer.cancel();
+
+            if(MyLocationService.isRunning)
+                return;
+
             startService(intent);
-            MyLocationService.isRunning = true;
+
         } else {
+            if(MyLocationService.isRunning)
+                stopService(intent);
+
             if(permissionRequested){
-                Timer timer = new Timer();
 
                 timer.scheduleAtFixedRate(new TimerTask() {
 
