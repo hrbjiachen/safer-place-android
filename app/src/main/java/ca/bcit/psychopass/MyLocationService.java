@@ -58,6 +58,15 @@ public class MyLocationService extends Service {
             for(Map.Entry<String, LocationCallback> entry : callbackMap.entrySet()){
                 entry.getValue().onCallback(location);
             }
+
+            DataAnalysis da = new DataAnalysis(location.getLongitude(),location.getLatitude(),MyJsonUtil.crimeList);
+            if(da.isDangerZone()){
+                sendNotification();
+            }
+            mLastLocation.set(location);
+        }
+
+        public void sendNotification() {
             Intent intent = new Intent(MyLocationService.this,MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
 
@@ -77,8 +86,6 @@ public class MyLocationService extends Service {
 
             NotificationManager notificationManager = (NotificationManager) MyLocationService.this.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(1, notification);
-
-            mLastLocation.set(location);
         }
 
         @Override
