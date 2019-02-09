@@ -176,4 +176,8 @@ public class MyLocationService extends Service {
         callbackMap.put(className, cb);
     }
 
+    public Location getLastLocation(){
+        return mLocationListeners[0].mLastLocation;
+    }
+
 }

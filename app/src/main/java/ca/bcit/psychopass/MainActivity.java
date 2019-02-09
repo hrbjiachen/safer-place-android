@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.graphics.Color;
@@ -165,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         locationServiceCheck();
@@ -254,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
             locationService = binder.getService();
             isBoundLocation = true;
             registerCallback();
+            curLocation = locationService.getLastLocation();
         }
 
         @Override
