@@ -6,20 +6,42 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 public class MyLocationService extends Service {
 
+    public static boolean isRunning = false;
+
     private static final String TAG = "BACKGROUNDLOCATION";
-    private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
+
+    private LocationManager mLocationManager = null;
+    private final IBinder mBinder = new LocationBinder();
+
+    private Map<String, List<LocationCallback>> callbackMap = new HashMap<>();
+
+    public interface LocationCallback {
+        void onCallback(Location location);
+    }
+
+    public class LocationBinder extends Binder {
+        MyLocationService getService() {
+            return MyLocationService.this;
+        }
+    }
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -32,6 +54,12 @@ public class MyLocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
+
+            for(Map.Entry<String, List<LocationCallback>> entry : callbackMap.entrySet()){
+                for(LocationCallback cb : entry.getValue()){
+                    cb.onCallback(location);
+                }
+            }
             Intent intent = new Intent(MyLocationService.this,MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
 
@@ -77,8 +105,13 @@ public class MyLocationService extends Service {
     };
 
     @Override
-    public IBinder onBind(Intent arg0) {
-        return null;
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
     }
 
     @Override
@@ -110,10 +143,12 @@ public class MyLocationService extends Service {
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
+        isRunning = true;
     }
 
     @Override
     public void onDestroy() {
+        isRunning = false;
         Log.e(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
@@ -133,4 +168,20 @@ public class MyLocationService extends Service {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
+
+    public void removeAllCallback(Class<? extends Context> classType) {
+        callbackMap.remove(classType.getName());
+    }
+
+    public void registerCallback(Class<? extends Context> classType, LocationCallback cb){
+        String className = classType.getName();
+        if(callbackMap.containsKey(className)){
+            Objects.requireNonNull(callbackMap.get(className)).add(cb);
+        } else {
+            List<LocationCallback> list = new ArrayList<>();
+            list.add(cb);
+            callbackMap.put(className, list);
+        }
+    }
+
 }

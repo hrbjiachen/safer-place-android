@@ -3,11 +3,16 @@ package ca.bcit.psychopass;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private ProgressDialog pDialog;
     private String TAG = MainActivity.class.getSimpleName();
+    private MyLocationService locationService;
+    private boolean isBoundLocation = false;
 
     public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/";
     public static final String SERVICE_URL = "https://opendata.arcgis.com/datasets/28c37c4693fc4db68665025c2874e76b_7.geojson";
@@ -50,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
-        locationServiceCheck();
 
         webView = findViewById(R.id.mapWebView);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -90,13 +95,48 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         locationServiceCheck();
+        Log.e("checkingpoint", "resuming--------");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        permissionRequested = false;
+        if(MyLocationService.isRunning){
+            Intent intent = new Intent(this, MyLocationService.class);
+            isBoundLocation = bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
+        Log.e("checkingpoint", "starting--------");
+    }
+
+    public void registerCallback(){
+        MyLocationService.LocationCallback cb = new MyLocationService.LocationCallback() {
+            @Override
+            public void onCallback(Location location) {
+                Toast.makeText(MainActivity.this,
+                        location.getLatitude() + ":" + location.getLongitude(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        locationService.registerCallback(MainActivity.class, cb);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isBoundLocation) {
+            locationService.removeAllCallback(MainActivity.class);
+            unbindService(mConnection);
+            isBoundLocation = false;
+        }
     }
 
     private void locationServiceCheck(){
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(getBaseContext(), MyLocationService.class);
+            Intent intent = new Intent(this, MyLocationService.class);
             startService(intent);
+            MyLocationService.isRunning = true;
         } else {
             if(permissionRequested){
                 Timer timer = new Timer();
@@ -124,6 +164,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            MyLocationService.LocationBinder binder = (MyLocationService.LocationBinder) service;
+            locationService = binder.getService();
+            isBoundLocation = true;
+            registerCallback();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBoundLocation = false;
+        }
+    };
 
     //this is not used, but keep it for reference
     private class GetCrimeData extends AsyncTask<Void, Void, Void> {
