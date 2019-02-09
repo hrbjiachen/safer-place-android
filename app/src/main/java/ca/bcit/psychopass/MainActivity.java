@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         locationServiceCheck();
 
-        webView = findViewById(R.id.webview1);
+        webView = findViewById(R.id.mapWebView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(INITIAL_LOCATION);
@@ -78,7 +78,12 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,CrimeListActivity.class);
         intent.putExtra("Longitude", testLongitude);
         intent.putExtra("Latitude", testLatitude);
-        startActivity(intent);
+        //startActivity(intent);
+
+        webView = findViewById(R.id.mapWebView);
+        String webUrl = webView.getUrl();
+        Toast.makeText(MainActivity.this, webUrl, Toast.LENGTH_LONG).show();
+        Log.e(TAG, webUrl);
     }
 
     @Override
