@@ -61,7 +61,8 @@ public class DataAnalysis {
 
 
     public boolean isDangerZone() {
-        return true;
+        ArrayList<Crime> list = getNearbyCrime();
+        return (list.size()> 20);
     }
 
 }
