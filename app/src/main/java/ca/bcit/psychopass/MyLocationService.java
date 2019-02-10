@@ -6,12 +6,19 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -59,34 +66,16 @@ public class MyLocationService extends Service {
                 entry.getValue().onCallback(location);
             }
 
-            DataAnalysis da = new DataAnalysis(location.getLongitude(),location.getLatitude(),MyJsonUtil.crimeList);
-            if(da.isDangerZone()){
-                sendNotification();
-            }
+            sendWarningByUserPreference();
+
+//            DataAnalysis da = new DataAnalysis(location.getLongitude(),location.getLatitude(),MyJsonUtil.crimeList);
+//            if(da.isDangerZone()){
+//                sendNotification();
+//            }
             mLastLocation.set(location);
         }
 
-        public void sendNotification() {
-            Intent intent = new Intent(MyLocationService.this,MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
 
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MyLocationService.this)
-                    .setSmallIcon(R.drawable.ic_warning)
-                    .setContentTitle("Warning")
-                    .setVibrate(new long[]{1000,1000,1000})
-                    .setContentIntent(pendingIntent)
-                    .setContentText("You have entered a dangrous zone. Be careful!")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            Notification notification;
-            notification = mBuilder
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) //to show content on lock screen
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build();
-
-            NotificationManager notificationManager = (NotificationManager) MyLocationService.this.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(1, notification);
-        }
 
         @Override
         public void onProviderDisabled(String provider) {
@@ -185,6 +174,71 @@ public class MyLocationService extends Service {
 
     public Location getLastLocation(){
         return mLocationListeners[0].mLastLocation;
+    }
+
+    public void sendWarningByUserPreference(){
+        SharedPreferences mSetting = PreferenceManager.getDefaultSharedPreferences(MyLocationService.this);
+        boolean pref_push = mSetting.getBoolean("pref_push", true);
+        boolean pref_text = mSetting.getBoolean("pref_text", true);
+        boolean pref_phone = mSetting.getBoolean("pref_phone", true);
+        Log.e(TAG, "User preferences: " + pref_push + pref_text + pref_phone);
+        if(pref_push){
+            sendNotification();
+        }
+        if(pref_text){
+            sendSMS();
+        }
+        if(pref_phone){
+            sendVibrate();
+        }
+    }
+
+    public void sendNotification() {
+        Intent intent = new Intent(MyLocationService.this,MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MyLocationService.this)
+                .setSmallIcon(R.drawable.ic_warning)
+                .setContentTitle("Warning")
+                .setContentIntent(pendingIntent)
+                .setContentText("You have entered a dangrous zone. Be careful!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+        Notification notification = mBuilder.build();
+
+        NotificationManager notificationManager = (NotificationManager) MyLocationService.this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
+    public void sendSMS(){
+
+        try {
+            TelephonyManager tMgr = (TelephonyManager)getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+            String mPhoneNumber = tMgr.getLine1Number();
+            Log.e(TAG, "Got Phone Number");
+            PendingIntent pi = PendingIntent.getActivity(this, 0,
+                    new Intent(this, MyLocationService.class), 0);
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage(mPhoneNumber, null, "danger", pi, null);
+            Log.e(TAG, "Text Msg Sent");
+        } catch (java.lang.SecurityException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void sendVibrate(){
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+            Log.e(TAG, "Vibration Sent via new Api");
+        } else {
+            //deprecated in API 26
+            v.vibrate(500);
+            Log.e(TAG, "Vibration Sent via old Api");
+        }
     }
 
 }

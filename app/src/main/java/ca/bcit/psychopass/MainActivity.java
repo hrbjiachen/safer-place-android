@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         MyJsonUtil jsonUtil = new MyJsonUtil(MainActivity.this,getApplicationContext());
         jsonUtil.parseLocalJSON();
+
     }
 
     public void setInitialWebView() {
@@ -205,8 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void locationServiceCheck(){
         Intent intent = new Intent(this, MyLocationService.class);
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (hasAllPermission()) {
 
             timer.cancel();
 
@@ -235,12 +235,29 @@ public class MainActivity extends AppCompatActivity {
 
                 }, TimeUnit.SECONDS.toMillis(5), TimeUnit.SECONDS.toMillis(30));
             } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        1);
+                requestForAllPermission();
                 permissionRequested = true;
             }
         }
+    }
+
+    public boolean hasAllPermission(){
+        return ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED;
+    }
+    public void requestForAllPermission(){
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.SEND_SMS,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.VIBRATE },
+                1);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
