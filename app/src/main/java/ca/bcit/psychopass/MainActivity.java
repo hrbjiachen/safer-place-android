@@ -190,9 +190,7 @@ public class MainActivity extends AppCompatActivity {
         MyLocationService.LocationCallback cb = new MyLocationService.LocationCallback() {
             @Override
             public void onCallback(Location location) {
-                Toast.makeText(MainActivity.this,
-                        location.getLatitude() + ":" + location.getLongitude(),
-                        Toast.LENGTH_SHORT).show();
+                Log.e(TAG,location.getLatitude() + ":" + location.getLongitude());
                 curLocation = location;
             }
         };

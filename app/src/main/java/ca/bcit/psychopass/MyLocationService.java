@@ -189,11 +189,11 @@ public class MyLocationService extends Service {
             sendSMS();
         }
         if(pref_phone){
-            sendVibrate();
+            sendSound();
         }
 
         if(pref_vibrate){
-            sendSound();
+            sendVibrate();
         }
     }
 
