@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Timer timer = new Timer();
     private Location curLocation;
 
-    public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/";
+    public static final String GOOGLE_MAP_URL = "https://www.google.com/maps/@";
     public static final String SERVICE_URL = "https://opendata.arcgis.com/datasets/28c37c4693fc4db68665025c2874e76b_7.geojson";
     public static final String INITIAL_LOCATION =
         "https://www.google.com/maps/place/Maple+Ridge,+BC/@49.2599033,-122.6800957,11z/data=!3m1!4b1!4m5!3m4!1s0x5485d3614f013ecb:0x47a5c3ea30cde8ea!8m2!3d49.2193226!4d-122.5983981";
@@ -78,7 +79,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(curLocation != null){
-                  Toast.makeText(MainActivity.this, curLocation.getLatitude() + ":" + curLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                    DecimalFormat df = new DecimalFormat("#.#######");
+                    double Lat = Double.valueOf(df.format(curLocation.getLatitude()));
+                    double Long = Double.valueOf(df.format(curLocation.getLongitude()));
+                    Log.e(TAG, Lat + ", " + Long);
+
+                    webView = findViewById(R.id.mapWebView);
+                    webView.loadUrl(GOOGLE_MAP_URL + Lat + "," + Long + ",16z");
                 }
             }
         });
