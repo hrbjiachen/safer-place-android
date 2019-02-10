@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -191,6 +192,7 @@ public class MyLocationService extends Service {
         if(pref_phone){
             sendVibrate();
         }
+        sendSound();
     }
 
     public void sendNotification() {
@@ -239,6 +241,12 @@ public class MyLocationService extends Service {
             v.vibrate(500);
             Log.e(TAG, "Vibration Sent via old Api");
         }
+    }
+
+    public void sendSound(){
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.fantastica);
+        mediaPlayer.start();
+        Log.e(TAG, "Playing Sound Notification");
     }
 
 }
