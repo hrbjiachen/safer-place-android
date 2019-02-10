@@ -23,6 +23,12 @@
             android:summary="@string/notification_phone_desc"
             android:defaultValue="false" />
 
+        <SwitchPreferenceCompat
+            android:key="pref_vibrate"
+            android:title="@string/notification_vibrate"
+            android:summary="@string/notification_vibrate_desc"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -4,7 +4,7 @@
     <string name="notificationLabel">Push Notification</string>
     <string name="SMS">Text Message</string>
     <string name="call">Phone Call</string>
-    <string name="sampleText">This is a slogan!</string>
+    <string name="sampleText">We care about your safety!</string>
     <string name="CrimeNearbyBtnText">Crime Nearby</string>
     <string name="viewDetail"><u>View Detail</u></string>
     <string name="noCrimeData">No crime data for this location!</string>
@@ -14,8 +14,12 @@
     <string name="notification_push_desc">Send notification on screen</string>
     <string name="notification_sms">Text Me</string>
     <string name="notification_sms_desc">Send notification through SMS</string>
-    <string name="notification_phone">Make Phone Call</string>
-    <string name="notification_phone_desc">Send notification through Phone Call</string>
+    <string name="notification_phone">Sound</string>
+    <string name="notification_phone_desc">Notify using sound</string>
+    <string name="notification_vibrate">Vibrate</string>
+    <string name="notification_vibrate_desc">Notify using vibration</string>
+    <string name="warning">Warning!</string>
+    <string name="warning_content">You have entered a dangrous zone. Be careful!</string>
 
 
 </resources>

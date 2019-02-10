@@ -2,6 +2,7 @@ package ca.bcit.psychopass;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClickListener{
+
+    private static final String TAG = "CrimeListAdaptor";
 
     private ArrayList<Crime> dataSet;
     Context mContext;
@@ -36,7 +39,6 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
         super(context, R.layout.row_item, data);
         this.dataSet = data;
         this.mContext=context;
-
     }
 
     public void setCurLocation(Location location) {
@@ -47,8 +49,7 @@ public class CrimeListAdaptor extends ArrayAdapter<Crime> implements View.OnClic
     public void onClick(View v) {
         int position=(Integer) v.getTag();
         Crime crime = getItem(position);
-
-        Toast.makeText(mContext, "Clicked on" + crime.getOffense(), Toast.LENGTH_LONG).show();
+        Log.e(TAG,"Clicked");
     }
 
     private int lastPosition = -1;

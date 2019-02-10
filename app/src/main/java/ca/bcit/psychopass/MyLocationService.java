@@ -67,12 +67,10 @@ public class MyLocationService extends Service {
                 entry.getValue().onCallback(location);
             }
 
-            sendWarningByUserPreference();
-
-//            DataAnalysis da = new DataAnalysis(location.getLongitude(),location.getLatitude(),MyJsonUtil.crimeList);
-//            if(da.isDangerZone()){
-//                sendNotification();
-//            }
+            DataAnalysis da = new DataAnalysis(location.getLongitude(),location.getLatitude(),MyJsonUtil.crimeList);
+            if(da.isDangerZone()){
+                sendWarningByUserPreference();
+        }
             mLastLocation.set(location);
         }
 
@@ -182,7 +180,8 @@ public class MyLocationService extends Service {
         boolean pref_push = mSetting.getBoolean("pref_push", true);
         boolean pref_text = mSetting.getBoolean("pref_text", true);
         boolean pref_phone = mSetting.getBoolean("pref_phone", true);
-        Log.e(TAG, "User preferences: " + pref_push + pref_text + pref_phone);
+        boolean pref_vibrate = mSetting.getBoolean("pref_vibrate", true);
+        Log.e(TAG, "User preferences: " + pref_push + pref_text + pref_phone + pref_vibrate);
         if(pref_push){
             sendNotification();
         }
@@ -192,18 +191,23 @@ public class MyLocationService extends Service {
         if(pref_phone){
             sendVibrate();
         }
-        sendSound();
+
+        if(pref_vibrate){
+            sendSound();
+        }
     }
 
     public void sendNotification() {
         Intent intent = new Intent(MyLocationService.this,MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(MyLocationService.this, 0, intent, 0);
+        String msgTitle = getString(R.string.warning);
+        String msgBody = getString(R.string.warning_content);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MyLocationService.this)
                 .setSmallIcon(R.drawable.ic_warning)
-                .setContentTitle("Warning")
+                .setContentTitle(msgTitle)
                 .setContentIntent(pendingIntent)
-                .setContentText("You have entered a dangrous zone. Be careful!")
+                .setContentText(msgBody)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -214,6 +218,7 @@ public class MyLocationService extends Service {
     }
 
     public void sendSMS(){
+        String msgBody = getString(R.string.warning_content);
 
         try {
             TelephonyManager tMgr = (TelephonyManager)getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
@@ -222,7 +227,7 @@ public class MyLocationService extends Service {
             PendingIntent pi = PendingIntent.getActivity(this, 0,
                     new Intent(this, MyLocationService.class), 0);
             SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(mPhoneNumber, null, "danger", pi, null);
+            sms.sendTextMessage(mPhoneNumber, null, msgBody, pi, null);
             Log.e(TAG, "Text Msg Sent");
         } catch (java.lang.SecurityException ex) {
             ex.printStackTrace();
