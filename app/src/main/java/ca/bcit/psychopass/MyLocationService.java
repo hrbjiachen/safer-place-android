@@ -33,7 +33,7 @@ public class MyLocationService extends Service {
     public static boolean isRunning = false;
 
     private static final String TAG = "BACKGROUNDLOCATION";
-    private static final int LOCATION_INTERVAL = 1000;
+    private static final int LOCATION_INTERVAL = 10000;
     private static final float LOCATION_DISTANCE = 10f;
 
     private LocationManager mLocationManager = null;
@@ -244,7 +244,7 @@ public class MyLocationService extends Service {
     }
 
     public void sendSound(){
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.fantastica);
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.psycho_pass_dominator);
         mediaPlayer.start();
         Log.e(TAG, "Playing Sound Notification");
     }
