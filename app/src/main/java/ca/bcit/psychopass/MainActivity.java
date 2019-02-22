@@ -17,10 +17,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,9 +67,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setInitialWebView() {
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
+
         webView = findViewById(R.id.mapWebView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                if (progress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                else {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         webView.loadUrl(INITIAL_LOCATION);
     }
 
