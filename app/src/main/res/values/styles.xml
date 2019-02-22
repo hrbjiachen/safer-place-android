@@ -14,9 +14,4 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
-    <style name="buttonColor">
-        <item name="android:background">@color/bootstrapPrimary</item>
-    </style>
-
-
 </resources>

@@ -68,17 +68,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void setInitialWebView() {
         final ProgressBar progressBar = findViewById(R.id.progressBar);
-
         webView = findViewById(R.id.mapWebView);
+
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
 
         webView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
                 if (progress == 100) {
+                    webView.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                 }
                 else {
+                    webView.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
                 }
             }
