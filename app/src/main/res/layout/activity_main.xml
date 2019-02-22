@@ -5,50 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:padding="10dp"
     android:background="@color/ghost_white">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/ghost_white"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="cursive"
-            android:text="@string/app_name"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            />
-
-        <ImageView
-            android:id="@+id/locationImg"
-            android:layout_width="35dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_location"
-            android:layout_marginRight="20dp"
-            android:contentDescription="@string/Setting"
-            android:scaleType="fitXY"/>
-
-        <ImageView
-            android:id="@+id/settingImg"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/settings_svg"
-            android:layout_marginEnd="5dp"
-            android:contentDescription="@string/Setting"
-            android:scaleType="fitXY"/>
-    </LinearLayout>
+    <include layout="@layout/toolbar_main" android:id="@+id/toolbar" />
 
     <WebView  xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapWebView"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_margin="10dp"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -62,7 +28,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:padding="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:id="@+id/infoLayout">
 
         <TextView
@@ -70,7 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sampleText"
-            android:textSize="20sp"
+            android:textSize="22sp"
+            android:fontFamily="cursive"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             />
@@ -82,7 +51,7 @@
         android:background="@drawable/ripple_effect"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_margin="10dp"
         android:textSize="20sp"
         android:textColor="@color/ghost_white"
         android:text="@string/CrimeNearbyBtnText"

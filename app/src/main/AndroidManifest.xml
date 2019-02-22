@@ -25,10 +25,10 @@
 
         <activity android:name=".SettingsActivity"
             android:theme="@style/AppTheme.Settings"
-            android:label="Settings"></activity>
+            android:label="@string/Setting"></activity>
         <activity
             android:name=".CrimeListActivity"
-            android:label="Crime List"/>
+            android:label="@string/CrimeList"/>
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme"

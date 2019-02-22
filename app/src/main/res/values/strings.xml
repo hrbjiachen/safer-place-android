@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">PsychoPass</string>
     <string name="Setting">Settings</string>
+    <string name="Location">Target current location</string>
+    <string name="CrimeList">Crime List</string>
     <string name="notificationLabel">Push Notification</string>
     <string name="SMS">Text Message</string>
     <string name="call">Phone Call</string>
