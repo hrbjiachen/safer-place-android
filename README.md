@@ -2,7 +2,7 @@
 New branch, refactored using google map view
 
 ## Installing
-*get your Google Map api key at below
+* get your Google Map api key at below
 ```
 https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=D1:D9:F7:A1:3D:F0:2E:E1:4A:C7:7A:96:6C:60:F7:18:54:28:77:6B%3Bca.bcit
 ```
