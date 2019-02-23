@@ -8,7 +8,7 @@
     <string name="call">Phone Call</string>
     <string name="sampleText">We care about your safety!</string>
     <string name="CrimeNearbyBtnText">Crime Nearby</string>
-    <string name="viewDetail"><u>View Detail</u></string>
+    <string name="viewDetail"><u><i>Detail</i></u></string>
     <string name="noCrimeData">No crime data for this location!</string>
     <string name="errorLocation">Error: unable to retrieve location info!</string>
     <string name="requirePermission">Location permission required. </string>

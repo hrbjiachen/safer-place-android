@@ -14,8 +14,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_warning" />
-                            <entry key="sourceFile" value="C:\Users\jjia\Downloads\warning.svg" />
+                            <entry key="height" value="32" />
+                            <entry key="outputName" value="ic_baseline_pageview_24px" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="C:\Users\jjia\Downloads\baseline-pageview-24px.svg" />
+                            <entry key="width" value="32" />
                           </map>
                         </option>
                       </PersistentState>

@@ -12,16 +12,16 @@
     <WebView  xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapWebView"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="10dp"/>
+        android:layout_height="fill_parent"
+        android:layout_margin="10dp"
+        android:layout_weight="100"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
         android:layout_gravity="center"
-        android:layout_weight="0.1"/>
+        />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -43,6 +43,32 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/view_list"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_pageview_24px"
+                android:scaleType="fitXY"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/viewDetail"
+                android:textSize="20dp"
+                android:fontFamily="cursive"
+                android:textStyle="bold"
+                android:textColor="@color/bootstrapPrimary"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 

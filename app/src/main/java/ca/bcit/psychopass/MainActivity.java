@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         locationServiceCheck();
         setInitialWebView();
-//        initializeSettingIcon();
-//        initializeLocationIcon();
 
         MyJsonUtil jsonUtil = new MyJsonUtil(MainActivity.this,getApplicationContext());
         jsonUtil.parseLocalJSON();
@@ -82,11 +80,8 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
                 if (progress == 100) {
-                    webView.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
-                }
-                else {
-                    webView.setVisibility(View.GONE);
+                } else {
                     progressBar.setVisibility(View.VISIBLE);
                 }
             }
@@ -95,45 +90,12 @@ public class MainActivity extends AppCompatActivity {
         webView.loadUrl(INITIAL_LOCATION);
     }
 
-//    public void initializeLocationIcon() {
-//        ImageView location = findViewById(R.id.locationImg);
-//        location.setClickable(true);
-//        location.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(curLocation != null){
-//                    DecimalFormat df = new DecimalFormat("#.#######");
-//                    double Lat = Double.valueOf(df.format(curLocation.getLatitude()));
-//                    double Long = Double.valueOf(df.format(curLocation.getLongitude()));
-//                    Log.e(TAG, Lat + ", " + Long);
-//
-//                    webView = findViewById(R.id.mapWebView);
-//                    webView.loadUrl(GOOGLE_MAP_URL + Lat + "," + Long + ",16z");
-//                }
-//            }
-//        });
-//    }
-//
-//    public void initializeSettingIcon() {
-//        ImageView setting = findViewById(R.id.settingImg);
-//        setting.setClickable(true);
-//        setting.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-//    }
-
     public void onClickBtn(View v) {
-        //testing coordinates
-        //double testLongitude = -122.6039533;
-        //double testLatitude = 49.2178709;
 
         Intent intent = new Intent(MainActivity.this,CrimeListActivity.class);
         webView = findViewById(R.id.mapWebView);
         String webUrl = webView.getUrl();
+        Log.e(TAG, webUrl);
 
         String pattern = "\\@(-?[\\d\\.]*)\\,(-?[\\d\\.]*)";
         Pattern r = Pattern.compile(pattern);
@@ -152,30 +114,21 @@ public class MainActivity extends AppCompatActivity {
         final double curLong = Double.parseDouble(coordinates[1]);
         final double curLati = Double.parseDouble(coordinates[0]);
 
-        LinearLayout layout = findViewById(R.id.infoLayout);
-        DataAnalysis d = new DataAnalysis(curLong,curLati, MyJsonUtil.crimeList);
+        LinearLayout layout_view_list = findViewById(R.id.view_list);
+        TextView tvInfo = findViewById(R.id.infoContainer);
 
+        //check how many crime nearby
+        DataAnalysis d = new DataAnalysis(curLong,curLati, MyJsonUtil.crimeList);
         int size = d.getNearbyCrime().size();
-        if(layout.getChildCount() > 1) {
-            layout.removeViewAt(1);
-        }
 
         if(size == 0) {
-            TextView tvInfo = findViewById(R.id.infoContainer);
             tvInfo.setText(R.string.sampleText);
+            layout_view_list.setVisibility(View.GONE);
             Toast.makeText(MainActivity.this, R.string.noCrimeData, Toast.LENGTH_LONG).show();
         } else {
-            TextView tvInfo = findViewById(R.id.infoContainer);
-            tvInfo.setText("Found " + size + " crimes nearby.");
-
-            TextView textView = new TextView(this);
-            textView.setText(R.string.viewDetail);
-            textView.setTextSize(18);
-            textView.setTextColor(Color.BLUE);
-
-            layout.addView(textView);
-
-            textView.setOnClickListener(new View.OnClickListener() {
+            layout_view_list.setVisibility(View.VISIBLE);
+            tvInfo.setText("Found " + size + " crimes nearby!");
+            layout_view_list.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(MainActivity.this, CrimeListActivity.class);
@@ -189,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu. This adds items to the app bar.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
