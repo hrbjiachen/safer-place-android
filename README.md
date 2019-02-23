@@ -13,4 +13,4 @@ New branch, refactored using google map view
 </resources>
 ```
 
-*Run the project
+* Run the project
