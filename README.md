@@ -13,4 +13,6 @@ New branch, refactored using google map view
 </resources>
 ```
 
+* You may need to sync, clean, rebuild your project to solve any errors
+
 * Run the project
