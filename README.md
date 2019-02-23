@@ -12,6 +12,7 @@ New branch, refactored using google map view
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">YOUR_API_KEY</string>
 </resources>
 ```
+**NOTE: Do not commit your google_maps_api.xml file**
 
 * You may need to sync, clean, rebuild your project to solve any errors
 
