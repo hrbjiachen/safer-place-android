@@ -1,4 +1,4 @@
-# Project PsychoPass
+# Project Safer Place
 New branch, refactored using google map view
 
 ## Installing
@@ -6,7 +6,7 @@ New branch, refactored using google map view
 
 * Using emulator with Google Play Service
 
-* Once pulled the branch, add a XML Resouce file under *res/values/google_maps_api.xml* with below code. **NOTE: Do not commit your google_maps_api.xml file**
+* Once pulled the branch, add a XML Resouce file under *res/values/google_maps_api.xml* with below code. 
 ```
 <resources>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">YOUR_API_KEY</string>
